@@ -26,6 +26,36 @@ function roundRectBottom(ctx: CanvasRenderingContext2D, x: number, y: number, wi
 const MatrixPills: React.FC<MatrixPillsProps> = ({ onComplete }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
+  // Helper to get pill positions for rendering click areas
+  function pillPositionsForRender() {
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    let width, height;
+    if (vw <= 400) {
+      width = 52; height = Math.max(0.52 * vh, 120);
+    } else if (vw <= 600) {
+      width = 68; height = Math.max(0.52 * vh, 150);
+    } else if (vw <= 900) {
+      width = 85; height = Math.max(0.52 * vh, 320);
+    } else {
+      width = 90; height = Math.max(0.52 * vh, 420);
+    }
+    return [
+      {
+        x: vw * 0.25 - width / 2,
+        y: vh / 2 - height / 2,
+        width,
+        height,
+      },
+      {
+        x: vw * 0.75 - width / 2,
+        y: vh / 2 - height / 2,
+        width,
+        height,
+      },
+    ];
+  }
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -191,15 +221,53 @@ const MatrixPills: React.FC<MatrixPillsProps> = ({ onComplete }) => {
   }, [onComplete]);
 
   return (
-    <canvas
-      ref={canvasRef}
+    <div
       style={{
-        display: "block",
+        position: "fixed",
+        inset: 0,
         width: "100vw",
         height: "100vh",
+        overflow: "hidden",
         background: "#000",
+        zIndex: 0,
       }}
-    />
+    >
+      <canvas
+        ref={canvasRef}
+        style={{
+          display: "block",
+          width: "100vw",
+          height: "100vh",
+          background: "#000",
+          position: "absolute",
+          top: 0,
+          left: 0,
+        }}
+      />
+      {/* Clickable pill areas for all screen sizes */}
+      {pillPositionsForRender().map((pill, idx) => (
+        <button
+          key={idx}
+          aria-label={idx === 0 ? "Blue Pill" : "Red Pill"}
+          style={{
+            position: "absolute",
+            left: pill.x,
+            top: pill.y,
+            width: pill.width,
+            height: pill.height,
+            background: "transparent",
+            border: "none",
+            cursor: "pointer",
+            zIndex: 2,
+            outline: "none",
+            padding: 0,
+          }}
+          onClick={() => {
+            if (typeof onComplete === "function") onComplete();
+          }}
+        />
+      ))}
+    </div>
   );
 };
 
