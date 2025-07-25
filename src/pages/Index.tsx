@@ -243,10 +243,10 @@ const Index = () => {
                 <div className="absolute inset-0 blur-3xl bg-gradient-to-r from-blue-400/20 to-purple-600/20 rounded-full animate-pulse" />
                 <h1 className="text-4xl md:text-7xl font-bold mb-6 relative">
                   <span className="bg-gradient-to-r from-blue-400 via-purple-500 to-blue-600 bg-clip-text text-transparent animate-gradient-x">
-                    Software Developer
+                    Sree Krishna Suresh
                   </span>
                   <br />
-                  <span className="text-foreground">& ML Engineer</span>
+                  <span className="text-foreground">ML Engineer</span>
                 </h1>
               </div>
               
