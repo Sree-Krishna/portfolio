@@ -145,7 +145,7 @@ const Index = () => {
     },
     {
       title: "Diebetic Retinopathy Classification",
-      description: "VClassified the images based on severity",
+      description: "Classified the images based on severity",
       tech: ["TypeScript", "OpenAI API", "VS Code API"],
       github: "https://github.com/Sree-Krishna/Diabetic-Blindness-Detection",
       demo: "#"
@@ -199,7 +199,7 @@ const Index = () => {
 
       {/* Animated Red/Blue Aurora Background + subtle 3D shapes (behind particles) */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-        <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[110vw] h-[50vh] bg-gradient-to-r from-blue-500/20 via-blue-400/04 to-red-500/20 blur-3xl opacity-28 animate-aurora" />
+        {/* top aurora glow removed per request */}
         <div className="absolute bottom-6 right-6 w-1/3 h-1/3 bg-gradient-to-tr from-red-500/10 via-blue-500/04 to-transparent blur-2xl opacity-22 animate-aurora2" />
 
         {/* 3D-like floating prisms (SVG) for depth */}
@@ -554,15 +554,15 @@ const Index = () => {
           </div>
         </motion.section>
         {/* Footer - Neon Glow */}
-        <footer className="py-12 px-4 lg:px-8 border-t border-border/50" style={{ background: "#fff", boxShadow: `0 0 24px ${neonBlue}` }}>
+        <footer className="py-12 px-4 lg:px-8" style={{ background: "#000" }}>
           <div className="container mx-auto text-center">
-            <p className="text-muted-foreground mb-4">
-              © 2024 Portfolio. Crafted with passion and precision.
+            <p className="text-gray-300 mb-4">
+              © 2025 Portfolio. Crafted with passion and precision.
             </p>
             <div className="flex justify-center space-x-6">
-              <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" />
+              <div className="w-2 h-2" style={{ background: neonBlue, borderRadius: 9999 }} />
               <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" style={{ animationDelay: "0.5s" }} />
-              <div className="w-2 h-2 bg-blue-600 rounded-full animate-pulse" style={{ animationDelay: "1s" }} />
+              <div className="w-2 h-2" style={{ background: neonBlue, borderRadius: 9999, opacity: 0.9, animationDelay: '1s' }} />
             </div>
           </div>
         </footer>
