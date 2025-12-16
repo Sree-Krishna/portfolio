@@ -6,9 +6,9 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import React, { useState } from "react";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
-import Landing from "../Landing";
-import MatrixPills from "../MatrixPills";
-import MatrixRain from "../MatrixRain";
+import Landing from "@/components/landing/Landing";
+import MatrixPills from "@/components/landing/MatrixPills";
+import MatrixRain from "@/components/landing/MatrixRain";
 
 const queryClient = new QueryClient();
 
