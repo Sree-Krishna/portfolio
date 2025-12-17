@@ -1,4 +1,7 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
+import GlowOverlay from "./GlowOverlay";
+import MatrixMessage from "./MatrixMessage";
+import useMatrixStyles from "./useMatrixStyles";
 
 interface MatrixPillsProps {
   onComplete?: () => void;
@@ -25,6 +28,30 @@ function roundRectBottom(ctx: CanvasRenderingContext2D, x: number, y: number, wi
 
 const MatrixPills: React.FC<MatrixPillsProps> = ({ onComplete }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [hovered, setHovered] = useState<string | null>(null);
+  useMatrixStyles();
+
+  // Download resume from public/ without navigating away.
+  async function downloadResume() {
+    const url = "portfolio/Sree_Krishna_Resume.pdf";
+    try {
+      const resp = await fetch(url, { cache: "no-cache" });
+      if (!resp.ok) throw new Error("Network response was not ok");
+      const blob = await resp.blob();
+      const objectUrl = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      console.log("Downloading resume from", url);
+      a.href = objectUrl;
+      a.download = "Sree_Krishna_Resume.pdf";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+    } catch (e) {
+      // fallback: open in new tab (doesn't navigate current page)
+      window.open(url, "_blank", "noopener,noreferrer");
+    }
+  }
 
   // Helper to get pill positions for rendering click areas
   function pillPositionsForRender() {
@@ -56,6 +83,8 @@ const MatrixPills: React.FC<MatrixPillsProps> = ({ onComplete }) => {
     ];
   }
 
+  // No automatic progression: user must click the red pill to advance.
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -77,7 +106,6 @@ const MatrixPills: React.FC<MatrixPillsProps> = ({ onComplete }) => {
     }
 
     let animationId: number;
-    let timer: NodeJS.Timeout;
 
     function resize() {
       canvas.width = window.innerWidth;
@@ -206,19 +234,63 @@ const MatrixPills: React.FC<MatrixPillsProps> = ({ onComplete }) => {
       initializeRainStates();
     });
 
-    if (typeof onComplete === 'function') {
-      timer = setTimeout(() => {
-        cancelAnimationFrame(animationId);
-        onComplete();
-      }, 2000);
+    // window-level mousemove handler for hover detection so overlays/buttons
+    // do not block hover updates (keeps glow working after clicks)
+    function handleMouseMove(e: MouseEvent) {
+      const x = e.clientX;
+      const y = e.clientY;
+      const pills = getPillPositions();
+      let found: string | null = null;
+      for (let i = 0; i < pills.length; i++) {
+        const p = pills[i];
+        // pill positions are relative to the canvas (viewport), so compare directly
+        if (x >= p.x && x <= p.x + p.width && y >= p.y && y <= p.y + p.height) {
+          found = i === 0 ? "blue" : "red";
+          break;
+        }
+      }
+      setHovered(found);
     }
+
+    function handleMouseLeave() {
+      setHovered(null);
+    }
+
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseleave", handleMouseLeave);
+
+    // Intentionally do NOT call onComplete automatically —
+    // progression happens only when the user clicks the red pill.
 
     return () => {
       cancelAnimationFrame(animationId);
-      if (timer) clearTimeout(timer);
       window.removeEventListener("resize", resize);
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseleave", handleMouseLeave);
     };
   }, [onComplete]);
+
+  const getGlowStyle = (): React.CSSProperties => {
+    if (!hovered) return { pointerEvents: "none", opacity: 0 } as React.CSSProperties;
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const left = hovered === "blue" ? 0.25 : 0.75;
+    const x = Math.round(vw * left);
+    const y = Math.round(vh / 2);
+    const color = hovered === "red" ? "255,23,68" : "0,191,255";
+    return {
+      pointerEvents: "none",
+      position: "fixed",
+      left: 0,
+      top: 0,
+      width: "100vw",
+      height: "100vh",
+      zIndex: 5,
+      opacity: 1,
+      transition: "opacity 0.25s ease",
+      background: `radial-gradient(circle at ${x}px ${y}px, rgba(${color},0.38) 0%, rgba(${color},0.18) 30%, rgba(${color},0) 70%)`,
+    } as React.CSSProperties;
+  };
 
   return (
     <div
@@ -244,10 +316,13 @@ const MatrixPills: React.FC<MatrixPillsProps> = ({ onComplete }) => {
           left: 0,
         }}
       />
+      <GlowOverlay style={getGlowStyle()} />
+      <MatrixMessage />
       {/* Clickable pill areas for all screen sizes */}
       {pillPositionsForRender().map((pill, idx) => (
         <button
           key={idx}
+          type="button"
           aria-label={idx === 0 ? "Blue Pill" : "Red Pill"}
           style={{
             position: "absolute",
@@ -263,6 +338,13 @@ const MatrixPills: React.FC<MatrixPillsProps> = ({ onComplete }) => {
             padding: 0,
           }}
           onClick={() => {
+            // Blue pill (index 0): trigger resume download and do not navigate
+            if (idx === 0) {
+              void downloadResume();
+              return;
+            }
+
+            // Red pill: proceed to the next step if provided
             if (typeof onComplete === "function") onComplete();
           }}
         />

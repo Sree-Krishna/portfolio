@@ -20,14 +20,18 @@ const About: React.FC = () => {
 						that power data-driven decisions. I thrive on turning complex algorithms into user-friendly solutions.
 					</p>
 					<div className="flex gap-4">
-						<Button variant="outline" size="sm" className="hover:scale-110 transition-transform group">
-							<Github className="w-4 h-4 mr-2 group-hover:rotate-12 transition-transform" />
-							GitHub
-						</Button>
-						<Button variant="outline" size="sm" className="hover:scale-110 transition-transform group">
-							<Linkedin className="w-4 h-4 mr-2 group-hover:rotate-12 transition-transform" />
-							LinkedIn
-						</Button>
+						<a href="https://github.com/Sree-Krishna" target="_blank" rel="noopener noreferrer">
+							<Button variant="outline" size="sm" className="hover:scale-110 transition-transform group">
+								<Github className="w-4 h-4 mr-2 group-hover:rotate-12 transition-transform" />
+								GitHub
+							</Button>
+						</a>
+                        <a href="https://www.linkedin.com/in/sree-krishna" target="_blank" rel="noopener noreferrer">
+                            <Button variant="outline" size="sm" className="hover:scale-110 transition-transform group">
+                                <Linkedin className="w-4 h-4 mr-2 group-hover:rotate-12 transition-transform" />
+                                LinkedIn
+                            </Button>
+                        </a>
 					</div>
 				</div>
 
