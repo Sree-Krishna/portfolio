@@ -18,7 +18,7 @@ const Navigation: React.FC<NavProps> = ({ activeSection, onNavigate }) => {
       initial={{ y: -30, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6 }}
-      className="fixed top-0 z-50 w-full backdrop-blur-2xl border-b border-border/50 shadow-[0_6px_24px_-6px_rgba(59,130,246,0.25)]"
+      className="fixed top-0 z-50 w-full backdrop-blur-2xl overflow-visible shadow-[0_6px_24px_-6px_rgba(59,130,246,0.65),0_10px_28px_-12px_rgba(239,68,68,0.25)]"
       style={{
         background:
           'linear-gradient(90deg, rgba(59,130,246,0.10), rgba(239,68,68,0.10))',
