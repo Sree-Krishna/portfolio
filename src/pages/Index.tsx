@@ -8,6 +8,8 @@ import Skills from '@/components/sections/Skills';
 import Projects from '@/components/sections/Projects';
 import Contact from '@/components/sections/Contact';
 import Footer from '@/components/sections/Footer';
+import JobChatWidget from '@/components/chat/JobChatWidget';
+import { getRelevanceFromJD, PortfolioProject, PortfolioSkills } from '@/lib/relevance';
 
 const neonBlue = '#3b82f6';
 const neonRed = '#ef4444';
@@ -42,12 +44,12 @@ const Index: React.FC = () => {
     if (el) el.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const skills = {
+  const baseSkills: PortfolioSkills = {
     development: ['React', 'TypeScript', 'Node.js', 'Python', 'AWS', 'Docker'],
     ml: ['TensorFlow', 'PyTorch', 'Scikit-learn', 'Pandas', 'NumPy', 'Jupyter'],
   };
 
-  const projects = [
+  const baseProjects: PortfolioProject[] = [
     { title: 'Crop Yield Prediction', description: 'Crop yield prediction using remote sensing data and a thorough statistical study about crop production', tech: ['Python', 'TensorFlow', 'React', 'AWS'], github: 'https://github.com/Sree-Krishna/Crop-Yield-Prediction-Using-Remote-Sensing-Data', demo: 'https://sites.google.com/view/crop-yield-analysis-prediction/home' },
     { title: 'Diebetic Retinopathy Classification', description: 'Classified the images based on severity', tech: ['TypeScript', 'OpenAI API', 'VS Code API'], github: 'https://github.com/Sree-Krishna/Diabetic-Blindness-Detection', demo: '#' },
     { title: 'Image Caption Generation', description: 'Generate descriptive captions for images using state-of-the-art deep learning techniques', tech: ['Python', 'Apache Kafka', 'Docker', 'PostgreSQL'], github: 'https://github.com/Sree-Krishna/Image-Caption-Generation-AI', demo: '#' },
@@ -56,6 +58,9 @@ const Index: React.FC = () => {
     { title: 'Auto Suggest Next Word', description: 'Generate the next word given a sentence', tech: ['Python', 'Apache Kafka', 'Docker', 'PostgreSQL'], github: 'https://github.com/Sree-Krishna/Autosuggest-Next-Word-Custom-GPT', demo: '#' },
   ];
 
+  const [relevantSkills, setRelevantSkills] = useState<PortfolioSkills>(baseSkills);
+  const [relevantProjects, setRelevantProjects] = useState<PortfolioProject[]>(baseProjects);
+
   // Parallax transforms
   const { scrollY } = useScroll();
   const heroTranslate = useTransform(scrollY, [0, 400], [0, -100]);
@@ -63,6 +68,13 @@ const Index: React.FC = () => {
   const skillsTranslate = useTransform(scrollY, [800, 1200], [0, -100]);
   const projectsTranslate = useTransform(scrollY, [1200, 1600], [0, -100]);
   const contactTranslate = useTransform(scrollY, [1600, 2000], [0, -100]);
+
+  const handleJDSubmit = async (jdText: string) => {
+    const result = await getRelevanceFromJD(jdText, baseSkills, baseProjects);
+    setRelevantSkills(result.skills);
+    setRelevantProjects(result.projects);
+    return { message: result.explanation ?? 'Updated sections for relevance.' };
+  };
 
   return (
     <div className="min-h-screen text-foreground relative overflow-x-hidden" style={{ background: '#030305' }}>
@@ -124,11 +136,11 @@ const Index: React.FC = () => {
         </motion.section>
 
         <motion.section id="skills" style={{ y: skillsTranslate } as any} className="py-16 px-4 lg:px-8">
-          <Skills skills={skills} />
+          <Skills skills={relevantSkills} />
         </motion.section>
 
         <motion.section id="projects" style={{ y: projectsTranslate } as any} className="py-16 px-4 lg:px-8 bg-background/80 backdrop-blur-sm">
-          <Projects projects={projects} />
+          <Projects projects={relevantProjects} />
         </motion.section>
 
         <motion.section id="contact" style={{ y: contactTranslate } as any} className="py-16 px-4 lg:px-8">
@@ -137,6 +149,8 @@ const Index: React.FC = () => {
 
         <Footer neonBlue={neonBlue} />
       </div>
+
+      <JobChatWidget onSubmit={handleJDSubmit} />
     </div>
   );
 };
