@@ -199,3 +199,21 @@
 .image-load {
   animation: image-load 0.8s ease-out forwards;
 }
+
+/* Chat widget scoped scrollbar */
+.matrix-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.matrix-scroll::-webkit-scrollbar-track {
+  background: #0b160b;
+}
+
+.matrix-scroll::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #10b981, #059669);
+  border-radius: 8px;
+}
+
+.matrix-scroll::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #34d399, #10b981);
+}

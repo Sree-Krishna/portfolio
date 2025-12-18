@@ -12,6 +12,7 @@ export type RelevanceResponse = {
   skills: PortfolioSkills;
   projects: PortfolioProject[];
   explanation?: string;
+  source: "ai" | "fallback";
 };
 
 const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
@@ -145,6 +146,7 @@ Instructions:
         skills: validatedSkills,
         projects: validatedProjects,
         explanation: parsed.explanation || "Personalized for this role.",
+        source: "ai",
       };
     } catch (error) {
       lastError = error;
@@ -158,7 +160,9 @@ Instructions:
 
   console.error("All retry attempts exhausted. Using fallback.", lastError);
   return fallbackRelevance(jdText, skills, projects);
-}function fallbackRelevance(
+}
+
+function fallbackRelevance(
   jdText: string,
   skills: PortfolioSkills,
   projects: PortfolioProject[]
@@ -183,5 +187,6 @@ Instructions:
     },
     projects: matchedProjects.length ? matchedProjects : projects.slice(0, 2),
     explanation: "Keyword-matched relevance (API fallback).",
+    source: "fallback",
   };
 }

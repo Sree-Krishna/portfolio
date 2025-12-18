@@ -73,7 +73,8 @@ const Index: React.FC = () => {
     const result = await getRelevanceFromJD(jdText, baseSkills, baseProjects);
     setRelevantSkills(result.skills);
     setRelevantProjects(result.projects);
-    return { message: result.explanation ?? 'Updated sections for relevance.' };
+    const sourceLabel = result.source === 'ai' ? 'AI (Gemini)' : 'Keyword fallback';
+    return { message: `${result.explanation ?? 'Updated sections for relevance.'} • Source: ${sourceLabel}` };
   };
 
   return (
